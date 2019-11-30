@@ -1,3 +1,5 @@
+import pygame
+from pygame import mixer
 import os
 from os import listdir
 import curses
@@ -25,7 +27,7 @@ def print_menu(stdscr, selected_row_idx):
                 pass
         
     stdscr.refresh()
-
+    
 def main(stdscr):
     
     # specify the current selected row
@@ -46,10 +48,14 @@ def main(stdscr):
             current_row -= 1
         elif key == curses.KEY_DOWN and current_row < len(menu)-1:
             current_row += 1
-        elif key == curses.KEY_ENTER or key in [10, 13]:
-            if len(menu) != 0:
+        elif key == curses.KEY_ENTER or key in [10, 13]: 
+           if os.path.isdir(menu[current_row]) == True:
                 os.chdir(menu[current_row])
                 current_row = 0
+           elif os.path.isfile(menu[current_row]) == True:
+               pygame.mixer.init()
+               pygame.mixer.music.load(menu[current_row])
+               pygame.mixer.music.play()
         elif key == curses.KEY_BACKSPACE:
             os.chdir("..")
             current_row = 0
