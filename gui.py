@@ -3,12 +3,20 @@ from pygame import mixer
 import os
 from os import listdir
 import curses
+from math import *
 
 def print_menu(stdscr, selected_row_idx):
+    height, width = stdscr.getmaxyx()
+
+    stdscr.border(0)
+
+    box_menu = curses.newwin(height,width,0,0)
+    box_menu.box()
+    
     stdscr.clear()
     menu = os.listdir()
-    height, width = stdscr.getmaxyx()
     stdscr.refresh()
+    box_menu.refresh()
     for idx, row in enumerate(menu):
         x = width//2 - len(row)//2
         y = height//2 - len(menu)//2 + idx
@@ -19,7 +27,6 @@ def print_menu(stdscr, selected_row_idx):
             except curses.error:
                 pass
             stdscr.attroff(curses.color_pair(1))
-            #current_row = idx
         else:
             try:
                 stdscr.addstr(y, x, row)
@@ -27,15 +34,8 @@ def print_menu(stdscr, selected_row_idx):
                 pass
         
     stdscr.refresh()
-    
-def main(stdscr):
-    
-    # specify the current selected row
-    current_row = 0
-    
-    # print the menu
-    print_menu(stdscr, current_row)
-    menu = os.listdir()
+
+def navigation(current_row, stdscr):
     while 1:
         try:
             curses.curs_set(0)
@@ -61,4 +61,13 @@ def main(stdscr):
             current_row = 0
         print_menu(stdscr, current_row)
 
-curses.wrapper(main)
+'''
+This function draws the menu and starts the navigation system. The cursor starts out at row 0.
+'''
+def draw_menu(stdscr):
+    current_row = 0 
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_CYAN)
+    print_menu(stdscr, current_row)
+    navigation(current_row, stdscr)
+
+curses.wrapper(draw_menu) #initializes curses and calls function draw_menu
