@@ -84,15 +84,37 @@ class menu:
                     self.current_row = 0
                     self.scroll_level = 0
                 elif os.path.isfile(self.menu[self.current_row]) == True:
-                    pygame.mixer.init()
-                    pygame.mixer.music.load(self.menu[self.current_row])
-                    pygame.mixer.music.play()
+                    song_info = songs(self.menu, self.current_row)
+                    song_info.play_song()
+                   # pygame.mixer.init()
+                    #pygame.mixer.music.load(self.menu[self.current_row])
+                    #pygame.mixer.music.play()
             elif key == curses.KEY_BACKSPACE:
                 os.chdir("..")
                 self.current_row = 0
 
             self.print_screen()
 
+
+class songs(menu):
+
+    def __init__(self, playlist, currently_playing):
+        self.playlist = playlist
+        self.currently_playing = currently_playing #for now this is an int
+
+    def change_playlist(playlist, currently_playing):
+        self.playlist = playlist
+        self.currently_playing = currently_playing
+
+    def next_song(self):
+        self.currently_playing = currently_playing + 1
+        play_song()
+
+    def play_song(self):
+        pygame.mixer.init()
+        pygame.mixer.music.load(self.playlist[self.currently_playing])
+        pygame.mixer.music.play()
+        pygame.mixer.music.queue(self.playlist[self.currently_playing + 1]) 
 
 def music_player(stdscr):    
     '''
