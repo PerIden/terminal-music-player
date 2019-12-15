@@ -3,7 +3,7 @@ from pygame import mixer
 import os
 from os import listdir
 import curses
-from math import *
+import vlc
 
 
 class menu:
@@ -79,16 +79,13 @@ class menu:
                     self.scroll_level += 1
                         
             elif key == curses.KEY_ENTER or key in [10, 13]: 
-                if os.path.isdir(self.menu[self.current_row]) == True:
-                    os.chdir(self.menu[self.current_row])
+                if os.path.isdir(self.menu[self.current_row]) == True: #Checks if the selected row is a directory
+                    os.chdir(self.menu[self.current_row]) #Changes directory
                     self.current_row = 0
                     self.scroll_level = 0
-                elif os.path.isfile(self.menu[self.current_row]) == True:
+                elif os.path.isfile(self.menu[self.current_row]) == True: #Checks if selected row is a file 
                     song_info = songs(self.menu, self.current_row)
-                    song_info.play_song()
-                   # pygame.mixer.init()
-                    #pygame.mixer.music.load(self.menu[self.current_row])
-                    #pygame.mixer.music.play()
+                    song_info.play_song() #Plays the file
             elif key == curses.KEY_BACKSPACE:
                 os.chdir("..")
                 self.current_row = 0
@@ -101,30 +98,28 @@ class songs(menu):
     def __init__(self, playlist, currently_playing):
         self.playlist = playlist
         self.currently_playing = currently_playing #for now this is an int
+        self.Instance = vlc.Instance()
 
     def change_playlist(playlist, currently_playing):
         self.playlist = playlist
         self.currently_playing = currently_playing
 
     def next_song(self):
-        self.currently_playing = currently_playing + 1
-        play_song()
+        self.currently_playing = self.currently_playing + 1
+        self.play_song()
 
     def play_song(self):
-        pygame.mixer.init()
-        pygame.mixer.music.load(self.playlist[self.currently_playing])
-        pygame.mixer.music.play()
-        pygame.mixer.music.queue(self.playlist[self.currently_playing + 1]) 
+        media_list = self.Instance.media_list_new(self.playlist)
+        list_player = self.Instance.media_list_player_new()
+        list_player.set_media_list(media_list)
+        list_player.play()
 
 def music_player(stdscr):    
     '''
     This function draws the menu and starts the navigation system. The cursor starts out at row 0.
     '''
-#    current_row = 0
-  #  scroll_level = 0
+    
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_CYAN)
-    #print_screen(stdscr, current_row, scroll_level)
-    #navigation(current_row, stdscr)
     menuObject = menu(stdscr)
     menuObject.print_screen()
     menuObject.navigation()
