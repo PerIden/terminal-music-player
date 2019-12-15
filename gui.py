@@ -63,19 +63,19 @@ class menu:
         '''
             
         while 1:
-            try:
-                curses.curs_set(0)
+            try: 
+                curses.curs_set(0) #disabling cursor doesn't work for all terminals
             except:
                 pass
             key = self.stdscr.getch()
             if key == curses.KEY_UP and self.current_row > 0:
                 self.current_row -= 1
-                if self.current_row >= self.max_rows:
+                if self.current_row == self.scroll_level - 1 and self.current_row >= 0:
                     self.scroll_level -= 1
                         
             elif key == curses.KEY_DOWN and self.current_row < len(self.menu)-1:
                 self.current_row += 1
-                if self.current_row > self.max_rows:
+                if self.current_row == self.scroll_level + self.max_rows + 1 and self.current_row < len(self.menu):
                     self.scroll_level += 1
                         
             elif key == curses.KEY_ENTER or key in [10, 13]: 
